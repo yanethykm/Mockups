@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundo Mujer · Negociación de cartera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-900:#0F3661;
+    --blue-700:#1B4F8C;
+    --blue-500:#2E6BB8;
+    --blue-100:#E7EFFA;
+    --green-600:#2E9E6B;
+    --green-100:#E4F5EC;
+    --amber-600:#B7791B;
+    --amber-100:#FBF0DA;
+    --red-600:#C2434A;
+    --red-100:#FBE9EA;
+    --ink:#16233D;
+    --ink-soft:#5B6B8C;
+    --line:#E1E6EF;
+    --surface:#FFFFFF;
+    --bg:#F5F7FA;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--blue-900);}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* ---------- LOGIN ---------- */
+  #view-login{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 20% 15%, var(--blue-700) 0%, var(--blue-900) 55%, #082644 100%);
+    padding:24px;
+  }
+  .login-card{
+    width:100%;max-width:400px;background:var(--surface);border-radius:16px;
+    padding:36px 32px 32px;box-shadow:0 24px 60px rgba(8,38,68,0.35);
+    animation:rise .5s ease-out;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .brand-row{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+  .brand-mark{width:34px;height:34px;border-radius:50%;background:conic-gradient(var(--green-600) 0 55%, var(--blue-700) 55% 100%);flex-shrink:0;}
+  .brand-row span{font-family:'Sora',sans-serif;font-weight:700;color:var(--blue-900);font-size:15px;letter-spacing:.2px;}
+  .login-card h2{font-size:22px;margin-bottom:4px;}
+  .login-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:26px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--blue-700);margin-bottom:6px;}
+  .field input{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:8px;font-size:14.5px;outline:none;transition:border-color .15s;}
+  .field input:focus{border-color:var(--blue-500);}
+  .btn-primary{
+    width:100%;padding:12px;border:none;border-radius:8px;background:var(--blue-700);
+    color:#fff;font-weight:600;font-size:14.5px;margin-top:6px;transition:background .15s;
+  }
+  .btn-primary:hover{background:var(--blue-900);}
+  .login-help{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:18px;}
+  .role-picker{display:flex;gap:6px;margin-top:22px;padding-top:18px;border-top:1px dashed var(--line);}
+  .role-picker button{flex:1;padding:8px 4px;border:1.5px solid var(--line);background:#fff;border-radius:7px;font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  .role-picker button.active{border-color:var(--blue-700);color:var(--blue-700);background:var(--blue-100);}
+  .role-picker-label{font-size:11px;color:var(--ink-soft);text-align:center;margin-top:8px;}
+
+  /* ---------- APP SHELL ---------- */
+  #view-app{display:none;min-height:100vh;}
+  .shell{display:flex;min-height:100vh;}
+  .sidebar{
+    width:220px;background:var(--blue-900);flex-shrink:0;display:flex;flex-direction:column;
+    padding:22px 14px;color:#fff;
+  }
+  .sidebar .brand-row span{color:#fff;}
+  .sidebar .brand-mark{background:conic-gradient(var(--green-600) 0 55%, #fff 55% 100%);}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#C9D6EA;
+    font-size:13.5px;font-weight:500;margin-bottom:2px;background:none;border:none;width:100%;text-align:left;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.85;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+  .nav-item.active{background:var(--blue-700);color:#fff;}
+  .nav-item.active svg{opacity:1;}
+  .sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,0.12);font-size:11.5px;color:#9FB1CC;}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{
+    height:60px;background:var(--surface);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;
+  }
+  .topbar h1{font-size:16.5px;}
+  .user-chip{display:flex;align-items:center;gap:9px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;}
+  .role-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--blue-100);color:var(--blue-700);}
+  .content{padding:24px;overflow-y:auto;}
+
+  /* mobile bottom nav */
+  .bottom-nav{display:none;}
+
+  /* ---------- DASHBOARD LIST ---------- */
+  .page-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .chip-filter{padding:6px 14px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  .chip-filter.active{border-color:var(--blue-700);background:var(--blue-700);color:#fff;}
+  .sol-list{display:flex;flex-direction:column;gap:10px;}
+  .sol-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:box-shadow .15s,border-color .15s;
+  }
+  .sol-card:hover{border-color:var(--blue-500);box-shadow:0 4px 14px rgba(27,79,140,0.08);}
+  .sol-id{font-weight:700;font-size:13.5px;color:var(--blue-700);width:118px;flex-shrink:0;}
+  .sol-name{flex:1;min-width:0;}
+  .sol-name .n{font-weight:600;font-size:14px;}
+  .sol-name .m{font-size:12px;color:var(--ink-soft);}
+  .sol-val{font-weight:700;font-size:14px;text-align:right;width:110px;flex-shrink:0;}
+  .status{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;width:88px;text-align:center;}
+  .status.pend{background:var(--amber-100);color:var(--amber-600);}
+  .status.appr{background:var(--green-100);color:var(--green-600);}
+  .status.rej{background:var(--red-100);color:var(--red-600);}
+
+  /* ---------- WIZARD / DETAIL ---------- */
+  .detail-layout{display:flex;gap:22px;align-items:flex-start;}
+  .detail-main{flex:1;min-width:0;}
+  .progress-rail{display:flex;align-items:center;margin-bottom:24px;}
+  .rail-step{display:flex;align-items:center;gap:9px;color:var(--ink-soft);font-size:13px;font-weight:600;}
+  .rail-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:#fff;}
+  .rail-step.done .rail-dot{background:var(--green-600);border-color:var(--green-600);color:#fff;}
+  .rail-step.current .rail-dot{background:var(--blue-700);border-color:var(--blue-700);color:#fff;}
+  .rail-step.current{color:var(--blue-900);}
+  .rail-line{width:44px;height:2px;background:var(--line);margin:0 8px;}
+  .rail-line.done{background:var(--green-600);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;}
+  .card h3{font-size:14.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .field-sm label{display:block;font-size:12px;font-weight:600;color:var(--blue-700);margin-bottom:6px;}
+  .field-sm input,.field-sm select,.field-sm textarea{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:7px;font-size:13.5px;outline:none;}
+  .field-sm input:focus,.field-sm select:focus,.field-sm textarea:focus{border-color:var(--blue-500);}
+  .field-sm{margin-bottom:14px;}
+  .mora-strip{display:flex;gap:12px;margin-top:6px;}
+  .mora-box{flex:1;background:var(--blue-100);border-radius:8px;padding:10px 12px;}
+  .mora-box .l{font-size:11px;color:var(--blue-700);font-weight:600;}
+  .mora-box .v{font-size:15px;font-weight:700;color:var(--blue-900);margin-top:2px;}
+
+  .summary-panel{
+    width:270px;flex-shrink:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 18px 20px;position:sticky;top:24px;
+  }
+  .summary-panel h4{font-size:13px;margin-bottom:14px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-bottom:1px dashed var(--line);}
+  .summary-row .v{font-weight:600;}
+  .summary-total{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:2px solid var(--blue-900);}
+  .summary-total .l{font-weight:700;font-size:13px;}
+  .summary-total .v{font-weight:700;font-size:17px;color:var(--green-600);}
+  .pct-bar-track{height:6px;background:var(--line);border-radius:4px;margin-top:14px;overflow:hidden;}
+  .pct-bar-fill{height:100%;background:var(--green-600);border-radius:4px;transition:width .2s;}
+  .pct-label{font-size:11px;color:var(--ink-soft);margin-top:6px;}
+
+  .wizard-actions{display:flex;justify-content:space-between;margin-top:18px;}
+  .btn-ghost{padding:10px 18px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-weight:600;font-size:13px;color:var(--ink-soft);}
+  .btn-next{padding:10px 22px;border-radius:8px;border:none;background:var(--blue-700);color:#fff;font-weight:600;font-size:13px;}
+
+  /* ---------- APPROVAL ---------- */
+  .select-all-row{
+    display:flex;align-items:center;padding:10px 15px;background:var(--blue-100);border-radius:var(--radius);margin-bottom:10px;
+  }
+  .select-all-row label{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--blue-700);cursor:pointer;}
+  .select-all-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--blue-700);}
+  .approval-summary{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+  .approval-stat{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;}
+  .approval-stat .l{font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+  .approval-stat .v{font-size:19px;font-weight:700;color:var(--blue-900);margin-top:3px;}
+  .app-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
+  .app-row-head{display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer;}
+  .app-row-head input[type=checkbox]{width:17px;height:17px;accent-color:var(--blue-700);flex-shrink:0;}
+  .app-row-body{display:none;padding:0 15px 15px 44px;font-size:12.5px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px;}
+  .app-row-body.open{display:block;}
+  .app-row-body .kv{display:flex;justify-content:space-between;padding:4px 0;}
+  .chevron{margin-left:auto;transition:transform .15s;flex-shrink:0;color:var(--ink-soft);}
+  .chevron.open{transform:rotate(180deg);}
+  .approval-actions{position:sticky;bottom:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .approval-actions textarea{flex:1;min-width:180px;padding:9px 11px;border:1.5px solid var(--line);border-radius:7px;font-size:12.5px;resize:none;height:38px;}
+  .btn-approve{padding:10px 18px;border-radius:8px;border:none;background:var(--green-600);color:#fff;font-weight:600;font-size:12.5px;white-space:nowrap;}
+  .btn-reject{padding:10px 18px;border-radius:8px;border:1.5px solid var(--red-600);background:#fff;color:var(--red-600);font-weight:600;font-size:12.5px;white-space:nowrap;}
+
+  .hidden{display:none !important;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 880px){
+    .sidebar{display:none;}
+    .detail-layout{flex-direction:column;}
+    .summary-panel{width:100%;position:static;order:-1;}
+    .grid2{grid-template-columns:1fr;}
+    .content{padding:16px;padding-bottom:78px;}
+    .bottom-nav{
+      display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--surface);
+      border-top:1px solid var(--line);height:60px;z-index:20;
+    }
+    .bottom-nav button{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      border:none;background:none;color:var(--ink-soft);font-size:10.5px;font-weight:600;
+    }
+    .bottom-nav button svg{width:19px;height:19px;}
+    .bottom-nav button.active{color:var(--blue-700);}
+    .sol-card{flex-wrap:wrap;}
+    .sol-val{width:auto;order:3;}
+    .status{order:2;margin-left:auto;}
+    .sol-id{width:auto;}
+    .approval-actions{flex-direction:column;align-items:stretch;}
+    .mora-strip{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="view-login">
+  <div class="login-card">
+    <div class="brand-row">
+      <div class="brand-mark"></div>
+      <span>MUNDO MUJER</span>
+    </div>
+    <h2>Gestión de negociaciones</h2>
+    <p class="login-sub">Ingresa con tus credenciales corporativas</p>
+    <div class="field">
+      <label>Usuario</label>
+      <input type="text" value="yamopan">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" value="••••••••">
+    </div>
+    <button class="btn-primary" onclick="enterApp()">Iniciar sesión</button>
+    <p class="login-help">¿Problemas para acceder? Contacta a soporte</p>
+    <div class="role-picker">
+      <button class="active" data-role="analista" onclick="pickRole(this,'analista')">Analista</button>
+      <button data-role="aprobador" onclick="pickRole(this,'aprobador')">Aprobador</button>
+      <button data-role="director" onclick="pickRole(this,'director')">Director</button>
+    </div>
+    <p class="role-picker-label">Vista de demostración según tu rol</p>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="view-app">
+  <div class="shell">
+    <div class="sidebar">
+      <div class="brand-row"><div class="brand-mark"></div><span>MUNDO MUJER</span></div>
+      <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Panel
+      </button>
+      <button class="nav-item" data-page="detail" onclick="showPage('detail',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+        Negociaciones
+      </button>
+      <button class="nav-item" data-page="approval" onclick="showPage('approval',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        Aprobaciones
+      </button>
+      <div class="sidebar-footer">v1 · Prototipo de diseño<br>Automatización & Modernización</div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h1 id="topbar-title">Panel de negociaciones</h1>
+        <div class="user-chip">
+          <span class="role-badge" id="role-badge-top">Analista</span>
+          <div class="user-avatar">YM</div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- PAGE: DASHBOARD -->
+        <div id="page-dashboard">
+          <div class="page-head">
+            <h2 style="font-size:18px;">Solicitudes de negociación</h2>
+          </div>
+          <div class="filter-row">
+            <span class="chip-filter active">Todas (12)</span>
+            <span class="chip-filter">Pendientes (7)</span>
+            <span class="chip-filter">Aprobadas (3)</span>
+            <span class="chip-filter">Rechazadas (2)</span>
+          </div>
+          <div class="sol-list">
+            <div class="sol-card" onclick="showPage('detail')">
+              <div class="sol-id">SOL-2025-00847</div>
+              <div class="sol-name"><div class="n">María del Carmen Tovar Rodríguez</div><div class="m">Popayán Centro · 94 días mora</div></div>
+              <div class="sol-val">$1.950.000</div>
+              <div class="status pend">Pendiente</div>
+            </div>
+            <div class="sol-card">
+              <div class="sol-id">SOL-2025-00831</div>
+              <div class="sol-name"><div class="n">Luis Fernando Morales</div><div class="m">Cali Norte · 61 días mora</div></div>
+              <div class="sol-val">$3.100.000</div>
+              <div class="status pend">Pendiente</div>
+            </div>
+            <div class="sol-card">
+              <div class="sol-id">SOL-2025-00819</div>
+              <div class="sol-name"><div class="n">Julián Pérez Salazar</div><div class="m">Bogotá Sur · 38 días mora</div></div>
+              <div class="sol-val">$780.000</div>
+              <div class="status appr">Aprobada</div>
+            </div>
+            <div class="sol-card">
+              <div class="sol-id">SOL-2025-00803</div>
+              <div class="sol-name"><div class="n">Rosa Elvia Castro</div><div class="m">Pasto · 71 días mora</div></div>
+              <div class="sol-val">$2.450.000</div>
+              <div class="status pend">Pendiente</div>
+            </div>
+            <div class="sol-card">
+              <div class="sol-id">SOL-2025-00798</div>
+              <div class="sol-name"><div class="n">Andrea Muñoz Ríos</div><div class="m">Neiva · 44 días mora</div></div>
+              <div class="sol-val">$920.000</div>
+              <div class="status appr">Aprobada</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: DETAIL / WIZARD -->
+        <div id="page-detail" class="hidden">
+          <div class="progress-rail">
+            <div class="rail-step done"><div class="rail-dot">✓</div>Datos generales</div>
+            <div class="rail-line done"></div>
+            <div class="rail-step current"><div class="rail-dot">2</div>Negociación</div>
+            <div class="rail-line"></div>
+            <div class="rail-step"><div class="rail-dot">3</div>Conceptos</div>
+          </div>
+
+          <div class="detail-layout">
+            <div class="detail-main">
+              <div class="card">
+                <h3>Cliente y solicitud</h3>
+                <div class="grid2">
+                  <div class="field-sm"><label>N.º solicitud</label><input value="SOL-2025-00847" disabled></div>
+                  <div class="field-sm"><label>Agencia / oficina</label><input value="Popayán Centro" disabled></div>
+                  <div class="field-sm"><label>Cliente</label><input value="María del Carmen Tovar Rodríguez" disabled></div>
+                  <div class="field-sm"><label>Cédula</label><input value="31 452 887" disabled></div>
+                </div>
+                <div class="mora-strip">
+                  <div class="mora-box"><div class="l">Días mora</div><div class="v">94</div></div>
+                  <div class="mora-box"><div class="l">Val. intereses</div><div class="v">$418.200</div></div>
+                  <div class="mora-box"><div class="l">Val. abonado</div><div class="v">$85.000</div></div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Propuesta de negociación</h3>
+                <div class="grid2">
+                  <div class="field-sm"><label>Valor propuesto</label><input id="in-valor" type="number" value="1950000" oninput="recalc()"></div>
+                  <div class="field-sm"><label>Plazo (meses)</label><input id="in-plazo" type="number" value="24" oninput="recalc()"></div>
+                  <div class="field-sm"><label>Cuotas pagadas</label><input value="8"></div>
+                  <div class="field-sm"><label>Categoría cliente</label><input value="A" disabled></div>
+                </div>
+                <div class="field-sm">
+                  <label>Causal de negociación</label>
+                  <select><option>Dificultad económica temporal</option><option>Pérdida de empleo</option><option>Enfermedad / incapacidad</option></select>
+                </div>
+                <div class="field-sm">
+                  <label>Justificación</label>
+                  <textarea rows="3">Cliente presenta afectación de ingresos por temporada baja; solicita reestructuración a 24 meses.</textarea>
+                </div>
+              </div>
+
+              <div class="wizard-actions">
+                <button class="btn-ghost" onclick="showPage('dashboard')">Volver</button>
+                <button class="btn-next">Continuar a conceptos →</button>
+              </div>
+            </div>
+
+            <div class="summary-panel">
+              <h4>Resumen en vivo</h4>
+              <div class="summary-row"><span>Monto desembolso</span><span class="v">$4.200.000</span></div>
+              <div class="summary-row"><span>Valor propuesto</span><span class="v" id="sum-valor">$1.950.000</span></div>
+              <div class="summary-row"><span>Plazo</span><span class="v" id="sum-plazo">24 meses</span></div>
+              <div class="summary-row"><span>% solicitado</span><span class="v" id="sum-pct">46.4%</span></div>
+              <div class="pct-bar-track"><div class="pct-bar-fill" id="pct-fill" style="width:46.4%"></div></div>
+              <div class="pct-label">Frente al monto original desembolsado</div>
+              <div class="summary-total"><span class="l">Valor a pagar</span><span class="v" id="sum-total">$1.950.000</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: APPROVAL -->
+        <div id="page-approval" class="hidden">
+          <h2 style="font-size:18px;margin-bottom:16px;">Aprobación de solicitudes</h2>
+          <div class="approval-summary">
+            <div class="approval-stat"><div class="l">Seleccionadas</div><div class="v" id="app-count">3 de 5</div></div>
+            <div class="approval-stat"><div class="l">Valor total</div><div class="v" id="app-total">$7.500.000</div></div>
+            <div class="approval-stat"><div class="l">% promedio</div><div class="v" id="app-avg">63%</div></div>
+          </div>
+
+          <div class="select-all-row">
+            <label>
+              <input type="checkbox" id="select-all-cb" onchange="toggleAll(this)">
+              <span id="select-all-label">Deseleccionar todas (3 de 5)</span>
+            </label>
+          </div>
+
+          <div class="app-row">
+            <div class="app-row-head" onclick="toggleRow(this)">
+              <input type="checkbox" class="row-cb" checked data-val="1950000" data-pct="52" onchange="event.stopPropagation();recalcApproval()" onclick="event.stopPropagation()">
+              <div style="flex:1;min-width:0;"><strong>SOL-2025-00847</strong> · M. C. Tovar — Popayán C.</div>
+              <div style="font-weight:700;">$1.950.000</div>
+              <div class="status pend" style="width:auto;">52%</div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="app-row-body">
+              <div class="kv"><span>Días mora</span><span>94</span></div>
+              <div class="kv"><span>Causal</span><span>Dificultad económica temporal</span></div>
+              <div class="kv"><span>Plazo propuesto</span><span>24 meses</span></div>
+            </div>
+          </div>
+
+          <div class="app-row">
+            <div class="app-row-head" onclick="toggleRow(this)">
+              <input type="checkbox" class="row-cb" checked data-val="3100000" data-pct="67" onchange="event.stopPropagation();recalcApproval()" onclick="event.stopPropagation()">
+              <div style="flex:1;min-width:0;"><strong>SOL-2025-00831</strong> · L. Morales — Cali Norte</div>
+              <div style="font-weight:700;">$3.100.000</div>
+              <div class="status pend" style="width:auto;">67%</div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="app-row-body">
+              <div class="kv"><span>Días mora</span><span>61</span></div>
+              <div class="kv"><span>Causal</span><span>Pérdida de empleo</span></div>
+              <div class="kv"><span>Plazo propuesto</span><span>18 meses</span></div>
+            </div>
+          </div>
+
+          <div class="app-row">
+            <div class="app-row-head" onclick="toggleRow(this)">
+              <input type="checkbox" class="row-cb" checked data-val="2450000" data-pct="71" onchange="event.stopPropagation();recalcApproval()" onclick="event.stopPropagation()">
+              <div style="flex:1;min-width:0;"><strong>SOL-2025-00803</strong> · R. Castro — Pasto</div>
+              <div style="font-weight:700;">$2.450.000</div>
+              <div class="status pend" style="width:auto;">71%</div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="app-row-body">
+              <div class="kv"><span>Días mora</span><span>71</span></div>
+              <div class="kv"><span>Causal</span><span>Enfermedad / incapacidad</span></div>
+              <div class="kv"><span>Plazo propuesto</span><span>30 meses</span></div>
+            </div>
+          </div>
+
+          <div class="app-row">
+            <div class="app-row-head" onclick="toggleRow(this)">
+              <input type="checkbox" class="row-cb" data-val="920000" data-pct="44" onchange="event.stopPropagation();recalcApproval()" onclick="event.stopPropagation()">
+              <div style="flex:1;min-width:0;"><strong>SOL-2025-00798</strong> · A. Muñoz — Neiva</div>
+              <div style="font-weight:700;">$920.000</div>
+              <div class="status pend" style="width:auto;">44%</div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="app-row-body">
+              <div class="kv"><span>Días mora</span><span>44</span></div>
+              <div class="kv"><span>Causal</span><span>Dificultad económica temporal</span></div>
+              <div class="kv"><span>Plazo propuesto</span><span>12 meses</span></div>
+            </div>
+          </div>
+
+          <div class="app-row">
+            <div class="app-row-head" onclick="toggleRow(this)">
+              <input type="checkbox" class="row-cb" data-val="780000" data-pct="38" onchange="event.stopPropagation();recalcApproval()" onclick="event.stopPropagation()">
+              <div style="flex:1;min-width:0;"><strong>SOL-2025-00819</strong> · J. Pérez — Bogotá Sur</div>
+              <div style="font-weight:700;">$780.000</div>
+              <div class="status pend" style="width:auto;">38%</div>
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="app-row-body">
+              <div class="kv"><span>Días mora</span><span>38</span></div>
+              <div class="kv"><span>Causal</span><span>Pérdida de empleo</span></div>
+              <div class="kv"><span>Plazo propuesto</span><span>10 meses</span></div>
+            </div>
+          </div>
+
+          <div class="approval-actions">
+            <textarea placeholder="Comentario para las solicitudes seleccionadas..."></textarea>
+            <button class="btn-reject" onclick="massAction('rechazar')">Rechazar seleccionadas</button>
+            <button class="btn-approve" onclick="massAction('aprobar')">Aprobar seleccionadas</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="active" data-page="dashboard" onclick="showPage('dashboard',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Panel
+    </button>
+    <button data-page="detail" onclick="showPage('detail',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+      Negociar
+    </button>
+    <button data-page="approval" onclick="showPage('approval',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      Aprobar
+    </button>
+  </div>
+</div>
+
+<script>
+function enterApp(){
+  document.getElementById('view-login').style.display='none';
+  document.getElementById('view-app').style.display='block';
+}
+function pickRole(btn,role){
+  document.querySelectorAll('.role-picker button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  var label = role==='analista'?'Analista':role==='aprobador'?'Aprobador':'Director';
+  document.getElementById('role-badge-top').textContent = label;
+  var avatar = document.querySelector('.user-avatar');
+  if(role!=='analista'){
+    // approver/director land on approval queue by default
+  }
+}
+function showPage(page, el, fromBottom){
+  document.getElementById('page-dashboard').classList.add('hidden');
+  document.getElementById('page-detail').classList.add('hidden');
+  document.getElementById('page-approval').classList.add('hidden');
+  document.getElementById('page-'+page).classList.remove('hidden');
+  var titles={dashboard:'Panel de negociaciones',detail:'Detalle de negociación',approval:'Aprobación de solicitudes'};
+  document.getElementById('topbar-title').textContent = titles[page];
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  document.querySelectorAll('.bottom-nav button').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  window.scrollTo(0,0);
+}
+function toggleRow(head){
+  var body = head.nextElementSibling;
+  var chevron = head.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+function toggleAll(masterCb){
+  var boxes = document.querySelectorAll('.row-cb');
+  boxes.forEach(function(cb){ cb.checked = masterCb.checked; });
+  recalcApproval();
+}
+function recalcApproval(){
+  var boxes = document.querySelectorAll('.row-cb');
+  var checked = Array.prototype.filter.call(boxes, function(cb){ return cb.checked; });
+  var total = 0, pctSum = 0;
+  checked.forEach(function(cb){
+    total += parseFloat(cb.dataset.val)||0;
+    pctSum += parseFloat(cb.dataset.pct)||0;
+  });
+  var avg = checked.length ? Math.round(pctSum/checked.length) : 0;
+  document.getElementById('app-count').textContent = checked.length+' de '+boxes.length;
+  document.getElementById('app-total').textContent = '$'+total.toLocaleString('es-CO');
+  document.getElementById('app-avg').textContent = avg+'%';
+
+  var master = document.getElementById('select-all-cb');
+  var allChecked = checked.length===boxes.length;
+  var noneChecked = checked.length===0;
+  master.checked = allChecked;
+  master.indeterminate = !allChecked && !noneChecked;
+  document.getElementById('select-all-label').textContent =
+    (allChecked ? 'Deseleccionar todas' : 'Seleccionar todas') + ' ('+checked.length+' de '+boxes.length+')';
+}
+function massAction(kind){
+  var checked = document.querySelectorAll('.row-cb:checked').length;
+  if(checked===0){ alert('Selecciona al menos una solicitud.'); return; }
+  alert((kind==='aprobar' ? 'Aprobando ' : 'Rechazando ') + checked + ' solicitud(es) seleccionada(s).');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  if(document.querySelector('.row-cb')) recalcApproval();
+});
+function recalc(){
+  var valor = parseFloat(document.getElementById('in-valor').value)||0;
+  var plazo = parseFloat(document.getElementById('in-plazo').value)||0;
+  var monto = 4200000;
+  var pct = monto>0 ? (valor/monto*100) : 0;
+  document.getElementById('sum-valor').textContent = '$'+valor.toLocaleString('es-CO');
+  document.getElementById('sum-plazo').textContent = plazo+' meses';
+  document.getElementById('sum-pct').textContent = pct.toFixed(1)+'%';
+  document.getElementById('sum-total').textContent = '$'+valor.toLocaleString('es-CO');
+  document.getElementById('pct-fill').style.width = Math.min(pct,100)+'%';
+}
+</script>
+</body>
+</html>
